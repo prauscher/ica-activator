@@ -42,4 +42,4 @@ class UserController(TGController):
     def logout(self):
         del(session["user"])
         session.save()
-        return "success"
+        return {"success": True}

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import random
 
 MEMBERSHIP_ORDINARY = 1
 MEMBERSHIP_SECONDARY = 2
@@ -18,8 +19,7 @@ class IcaConnector:
         pass
 
     def auth(self, user, password):
-        # return False
-        return True
+        return random.choice([True, False])
 
     def search(self, user, password, string):
         return [
