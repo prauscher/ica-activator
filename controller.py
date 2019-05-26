@@ -12,20 +12,18 @@ fileStorage = FileStorage("./temp", "./storage")
 
 
 class RootController(TGController):
-    user = UserController(userChecker=ica.auth, redirectTarget="/search.html")
+    user = UserController(userChecker=ica.auth, redirectTarget="/upload.html")
 
     @expose()
     def index(self):
-        redirect("/search.html")
+        redirect("/upload.html")
 
-    @expose("templates/search.xhtml")
+    @expose("templates/upload.xhtml")
     @require_login()
-    def search(self):
-        return {}
+    def upload(self, applicationFile=None):
+        if applicationFile is None:
+            return {}
 
-    @expose()
-    @require_login()
-    def upload(self, applicationFile):
         try:
             userdata = get_userdata()
             fileId = fileStorage.storeFileTemporary(
