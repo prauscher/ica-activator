@@ -55,6 +55,7 @@ class IcaConnector:
             "reason1": "-",
             "reason2": "-",
             "membershipDate": datetime.date(2019, 5, 24),
+            "department": "Graue Bären",
         }
 
     def activate(self, user, password, memberId):
