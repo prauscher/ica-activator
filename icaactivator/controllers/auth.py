@@ -24,7 +24,7 @@ class UserController(TGController):
         self.userChecker = userChecker
         self.redirectTarget = redirectTarget
 
-    @expose("templates/login.xhtml")
+    @expose("login.xhtml")
     def login(self, username=None, password=None):
         if username is None or password is None:
             # render form

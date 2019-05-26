@@ -3,7 +3,7 @@
 
 from tg import expose, redirect, TGController
 from tg.controllers.util import abort
-from auth import UserController, require_login, get_userdata
+from .auth import UserController, require_login, get_userdata
 from backend.ica import IcaConnector
 from backend.files import FileStorage, UploadException
 
@@ -18,7 +18,7 @@ class RootController(TGController):
     def index(self):
         redirect("/upload.html")
 
-    @expose("templates/upload.xhtml")
+    @expose("upload.xhtml")
     @require_login()
     def upload(self, applicationFile=None):
         if applicationFile is None:
@@ -33,7 +33,7 @@ class RootController(TGController):
         except UploadException as e:
             return {"success": False, "message": str(e)}
 
-    @expose("templates/review.xhtml")
+    @expose("review.xhtml")
     @require_login()
     def review(self, fileId):
         return {"fileId": fileId}
