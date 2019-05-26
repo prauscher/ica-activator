@@ -60,10 +60,18 @@ class FileStorage:
     def storeFile(self, username, fileId, memberId):
         destination = self._getPermanentFilepath(memberId)
 
+        if os.path.exists(destination):
+            raise StorageException(
+                "Es existiert bereits ein Antrag für Mitglied " + memberId)
+
         os.rename(
             self._getTemporaryFilepath(username, fileId),
             self._getPermanentFilepath(memberId))
 
 
 class UploadException(Exception):
+    pass
+
+
+class StorageException(Exception):
     pass
