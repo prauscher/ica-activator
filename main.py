@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from tg import FullStackApplicationConfigurator
 import socket
 from icaactivator.config.app_cfg import base_config
 from wsgiref.simple_server import WSGIServer, make_server

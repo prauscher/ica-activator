@@ -1,2 +1,3 @@
 * remove old temp-files (age >1 day)
 * build routine to remove applications of "archived" members
+* use transaction for storage: only store permanently iff ica accepted
