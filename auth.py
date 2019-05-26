@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from tg import expose, redirect, session, TGController
+from tg.decorators import before_validate
 from urllib.parse import quote
 
 
@@ -9,15 +10,13 @@ def get_userdata():
     return session["user"]
 
 
-def require_login():
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            if "user" not in session:
-                redirect("/user/login.html")
-            else:
-                return func(*args, **kwargs)
-        return wrapper
-    return decorator
+class require_login(before_validate):
+    def __init__(self):
+        super(require_login, self).__init__(self.check_auth)
+
+    def check_auth(self, remainder, params):
+        if "user" not in session:
+            redirect("/user/login.html")
 
 
 class UserController(TGController):
