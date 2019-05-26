@@ -4,6 +4,7 @@ Description=WebApp to archive application forms for ICA
 [Service]
 Type=simple
 ExecStart=$APP_ROOT/main.py
+WorkingDirectory=$APP_ROOT
 
 [Install]
 WantedBy=default.target
