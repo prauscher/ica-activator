@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import random
 import hashlib
 
 MEMBERSHIP_ORDINARY = 1
@@ -32,8 +33,8 @@ class IcaConnector:
 
     def search(self, user, password, string):
         return [
-            {"memberId": 325, "name": "Philipp Metzler"},
-            {"memberId": 523, "name": "Random Dude"},
+            {"memberId": random.randint(100, 199), "name": "Philipp Metzler"},
+            {"memberId": random.randint(200, 299), "name": "Random Dude"},
         ]
 
     def get(self, user, password, id):
