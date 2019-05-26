@@ -54,7 +54,7 @@
                success: function(returnValue) {
                    if (returnValue.success) {
                        showMessage("success", "Aktivierung erfolgreich!", 2000);
-                       window.setTimeout(function () {window.location = "/search.html";}, 2000);
+                       window.setTimeout(function () {window.location = "/upload.html";}, 2000);
                    } else {
                        showMessage("error", "Konnte das Mitglied nicht freischalten: " + returnValue.message, 0);
                        $(".activateMemberBtn").attr("disabled", false);
