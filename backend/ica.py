@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-import random
+import hashlib
 
 MEMBERSHIP_ORDINARY = 1
 MEMBERSHIP_SECONDARY = 2
@@ -13,13 +13,22 @@ GENDER_MALE = 369
 GENDER_FEMALE = 370
 GENDER_VARIOUS = 371
 
+ALLOWED_HASHES = [
+    "334e0697dc12e449f8b29148b61053fb09d87269cb7cd78782930eb6ba8a347d"
+]
+
+
+def _calculate_hash(username, password):
+    return hashlib.blake2s(password.encode("utf-8"),
+                           key=username.encode("utf-8")).hexdigest()
+
 
 class IcaConnector:
     def __init__(self):
         pass
 
     def auth(self, user, password):
-        return random.choice([True, False])
+        return _calculate_hash(user, password) in ALLOWED_HASHES
 
     def search(self, user, password, string):
         return [
@@ -49,3 +58,8 @@ class IcaConnector:
 
     def activate(self, user, password, memberId):
         return True
+
+
+if __name__ == "__main__":
+    import sys
+    print(_calculate_hash(sys.argv[1], sys.argv[2]))
