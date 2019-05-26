@@ -37,7 +37,7 @@ class UserController(TGController):
         else:
             return {"success": False}
 
-    @expose()
+    @expose("json")
     def logout(self):
         del(session["user"])
         session.save()
