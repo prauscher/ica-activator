@@ -41,13 +41,23 @@ class FileStorage:
     def storeFileTemporary(self, username, file):
         extension = file.filename.split(".")[-1][0:7]
         if extension not in HANDLERS:
-            raise Exception("Extension {} is not allowed".format(extension))
+            extensions = ['"' + ext + '"' for ext in HANDLERS.keys()]
+            extensions = [", ".join(extensions[:-1]), extensions[-1]]
+            extensions = " oder ".join(extensions)
+            message = "Dateierweiterung \"{}\" ist ungültig. Bitte {} " \
+                "verwenden.".format(extension, extensions)
+            raise UploadException(message)
         handler = HANDLERS[extension]
+
+        try:
+            thumbnail = handler(file.value)
+        except Exception as e:
+            raise UploadException("Ungültige Datei: " + str(e))
 
         fileId, filePath = self._generateTemporaryFilename(username)
 
         with open(filePath, "wb") as fp:
-            fp.write(handler(file.value))
+            fp.write(thumbnail)
 
         return fileId
 

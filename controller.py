@@ -31,7 +31,7 @@ class RootController(TGController):
                 applicationFile)
             redirect("/review.html?fileId={}".format(fileId))
         except UploadException as e:
-            return str(e)
+            return {"success": False, "message": str(e)}
 
     @expose("templates/review.xhtml")
     @require_login()

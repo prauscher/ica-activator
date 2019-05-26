@@ -20,6 +20,9 @@
    <h1>Dateiupload</h1>
    <p>Bitte nur eine Datei hochladen, welche exakt genau einen Mitgliedsantrag enthält. Als Dateiformate
     sind PDF, PNG oder JPEG zulässig, wobei bei PDF-Dokumenten nur die erste Seite verwendet wird.</p>
+   {% if success is defined and not success %}
+   <p class="error">Der Upload war nicht erfolgreich: {{ message }}</p>
+   {% endif %}
    <div class="row">
     <form action="upload" method="post" enctype="multipart/form-data">
      <div class="six columns">
