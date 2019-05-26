@@ -53,7 +53,7 @@ class RootController(TGController):
             userdata = get_userdata()
             ica.activate(userdata["username"], userdata["password"], memberId)
             return {"success": True}
-        except:
+        except Exception as e:
             return {"success": False}
 
     @expose("json")
