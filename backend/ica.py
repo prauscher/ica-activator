@@ -3,7 +3,7 @@
 
 import datetime
 import random
-import hashlib
+import hmac
 
 MEMBERSHIP_ORDINARY = 1
 MEMBERSHIP_SECONDARY = 2
@@ -15,13 +15,14 @@ GENDER_FEMALE = 370
 GENDER_VARIOUS = 371
 
 ALLOWED_HASHES = [
-    "334e0697dc12e449f8b29148b61053fb09d87269cb7cd78782930eb6ba8a347d"
+    "cb942e814af87e97e5be94c8fd7a3b2b",
+    "8e19eeeb40d7e7ff92f054f099846650",
 ]
 
 
 def _calculate_hash(username, password):
-    return hashlib.blake2s(password.encode("utf-8"),
-                           key=username.encode("utf-8")).hexdigest()
+    return hmac.new(username.encode("utf-8"),
+                    password.encode("utf-8")).hexdigest()
 
 
 class IcaConnector:
