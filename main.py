@@ -18,5 +18,5 @@ config.update_blueprint({
 
 application = config.make_wsgi_app()
 print("Serving on port 8080...")
-httpd = make_server('', 8080, application)
+httpd = make_server('::1', 8080, application)
 httpd.serve_forever()
