@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="/css/normalize.css">
   <link rel="stylesheet" href="/css/skeleton.css">
+  <link rel="stylesheet" href="/custom.css">
   <link rel="stylesheet" href="/jquery-ui.min.css">
   <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
   <script type="text/javascript" src="jquery-ui.min.js"></script>
@@ -52,28 +53,39 @@
                data: {"fileId": "{{ fileId }}", "memberId": memberId},
                success: function(returnValue) {
                    if (returnValue.success) {
-                       alert("Aktivierung erfolgreich!");
-                       window.location = "/search.html";
+                       showMessage("success", "Aktivierung erfolgreich!", 2000);
+                       window.setTimeout(function () {window.location = "/search.html";}, 2000);
                    } else {
-                       alert("Konnte das Mitglied nicht freischalten: " + returnValue.message);
+                       showMessage("error", "Konnte das Mitglied nicht freischalten: " + returnValue.message, 0);
                        $(".activateMemberBtn").attr("disabled", false);
+                       showMemberSearch();
                    }
                },
                error: function() {
-                   alert("Konnte das Mitglied nicht freischalten");
+                   showMessage("error", "Konnte das Mitglied nicht freischalten", 0);
                    $(".activateMemberBtn").attr("disabled", false);
+                   showMemberSearch();
                },
            });
        });
 
-       $("input.memberSearch").focus();
+       showMemberSearch();
    });
+
+   function showMessage(styleClass, message, duration) {
+       var elem = $("<p>").addClass(styleClass).text(message);
+       if (duration > 0) {
+           elem.delay(duration).fadeOut();
+       }
+       $(".messages").append(elem);
+   }
 
    function showMemberSearch() {
        $("input.memberSearch").attr("disabled", false).val("");
 
        $("div.memberSearch").show();
        $("div.memberReview").hide();
+       $("input.memberSearch").focus();
    }
 
    function showMember(memberId) {
@@ -93,9 +105,10 @@
 
                $("div.memberSearch").hide();
                $("div.memberReview").show();
+               $(".activateMemberBtn").focus();
            },
            error: function() {
-               alert("Mitgliederdaten können nicht abgerufen werden.");
+               showMessage("error", "Mitgliederdaten können nicht abgerufen werden.", 0);
                showMemberSearch();
            },
        });
@@ -107,6 +120,7 @@
    <h1>Überprüfung</h1>
    <p>Auf der linken Seite wird der Mitgliedsantrag angezeigt. Bitte suche auf der rechten Seite das
     entsprechende Mitglied anhand des Namens.</p>
+   <div class="messages"></div>
    <div class="row">
     <div class="six columns">
      <img src="application.jpg?id={{ fileId }}" width="100%" />
@@ -114,7 +128,7 @@
     <div class="six columns memberSearch">
      <input type="text" class="u-full-width memberSearch" />
     </div>
-    <div class="three columns memberReview" style="display:none;">
+    <div class="three columns memberReview">
      <label for="membership">Mitgliedsart</label>
      <input type="text" name="membership" class="u-full-width membership" value="" disabled="disabled" />
      <label for="givenName">Vorname</label>
@@ -127,14 +141,13 @@
      <input type="text" name="street" class="u-full-width street" value="" disabled="disabled" />
      <label for="cityCode">PLZ und Ort</label>
      <input type="text" name="cityCode" class="cityCode" value="" style="width:27%;" disabled="disabled" />
-     <!-- <label for="city">Ort</label> -->
      <input type="text" name="city" class="city" value="" style="width:69%;" disabled="disabled" />
      <label for="reason1">Begründung Mitglied</label>
      <textarea name="reason1" class="u-full-width reason1" disabled="disabled"></textarea>
      <label for="reason2">Begründung Stamm</label>
      <textarea name="reason2" class="u-full-width reason2" disabled="disabled"></textarea>
     </div>
-    <div class="three columns memberReview" style="display:none;">
+    <div class="three columns memberReview">
      <label for="department">Gliederung</label>
      <input type="text" name="department" class="u-full-width department" value="" disabled="disabled" />
      <label for="birthDate">Geburtsdatum</label>
