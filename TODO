@@ -1,0 +1,2 @@
+* remove old temp-files (age >1 day)
+* build routine to remove applications of "archived" members
