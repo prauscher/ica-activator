@@ -17,9 +17,11 @@ config.update_blueprint({
     },
 })
 
+
 # fix for ipv6
 class server_cls(WSGIServer):
     address_family = socket.AF_INET6
+
 
 application = config.make_wsgi_app()
 print("Serving on port 8080...")
