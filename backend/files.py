@@ -23,42 +23,45 @@ class FileStorage:
         self.temporaryFolder = temporaryFolder
         self.destinationFolder = destinationFolder
 
-    def _getTemporaryFilepath(self, fileId):
-        return os.path.join(self.temporaryFolder, fileId + ".jpg")
+    def _getTemporaryFilepath(self, username, fileId):
+        return os.path.join(
+            self.temporaryFolder,
+            username + "-" + fileId + ".jpg")
 
-    def _generateTemporaryFilename(self):
+    def _generateTemporaryFilename(self, username):
         while True:
             fileId = "".join(random.choice(CHARACTERS) for i in range(10))
-            filePath = self._getTemporaryFilepath(fileId)
+            filePath = self._getTemporaryFilepath(username, fileId)
             if not os.path.isfile(filePath):
                 return fileId, filePath
 
     def _getPermanentFilepath(self, memberId):
         return os.path.join(self.destinationFolder, memberId + ".jpg")
 
-    def storeFileTemporary(self, file):
+    def storeFileTemporary(self, username, file):
         extension = file.filename.split(".")[-1][0:7]
         if extension not in HANDLERS:
             raise Exception("Extension {} is not allowed".format(extension))
         handler = HANDLERS[extension]
 
-        fileId, filePath = self._generateTemporaryFilename()
+        fileId, filePath = self._generateTemporaryFilename(username)
 
         with open(filePath, "wb") as fp:
             fp.write(handler(file.value))
 
         return fileId
 
-    def getPreview(self, fileId):
-        # TODO limit access
-        filePath = self._getTemporaryFilepath(fileId)
+    def getPreview(self, username, fileId):
+        filePath = self._getTemporaryFilepath(username, fileId)
         with open(filePath, "rb") as fb:
             data = fb.read()
         return data
 
-    def storeFile(self, fileId, memberId):
+    def storeFile(self, username, fileId, memberId):
+        destination = self._getPermanentFilepath(memberId)
+
         os.rename(
-            self._getTemporaryFilepath(fileId),
+            self._getTemporaryFilepath(username, fileId),
             self._getPermanentFilepath(memberId))
 
 

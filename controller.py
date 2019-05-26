@@ -27,7 +27,10 @@ class RootController(TGController):
     @require_login()
     def upload(self, applicationFile):
         try:
-            fileId = fileStorage.storeFileTemporary(applicationFile)
+            userdata = get_userdata()
+            fileId = fileStorage.storeFileTemporary(
+                userdata["username"],
+                applicationFile)
             redirect("/review.html?fileId={}".format(fileId))
         except UploadException as e:
             return str(e)
@@ -41,7 +44,8 @@ class RootController(TGController):
     @require_login()
     def application(self, id):
         try:
-            return fileStorage.getPreview(id)
+            userdata = get_userdata()
+            return fileStorage.getPreview(userdata["username"], id)
         except FileNotFoundError:
             abort(404)
 
@@ -49,21 +53,22 @@ class RootController(TGController):
     @require_login()
     def activate(self, fileId, memberId):
         try:
-            fileStorage.storeFile(fileId, memberId)
             userdata = get_userdata()
-            ica.activate(userdata["username"], userdata["password"], memberId)
+            fileStorage.storeFile(userdata["username"], fileId, memberId)
             return {"success": True}
         except Exception as e:
-            return {"success": False}
+            return {"success": False, "message": str(e)}
 
     @expose("json")
     @require_login()
     def find(self, query):
         userdata = get_userdata()
-        return {"data": ica.search(userdata["username"], userdata["password"], query)}
+        data = ica.search(userdata["username"], userdata["password"], query)
+        return {"data": data}
 
     @expose("json")
     @require_login()
     def query(self, memberId):
         userdata = get_userdata()
-        return {"data": ica.get(userdata["username"], userdata["password"], memberId)}
+        data = ica.get(userdata["username"], userdata["password"], memberId)
+        return {"data": data}
