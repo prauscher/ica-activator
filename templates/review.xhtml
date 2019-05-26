@@ -12,7 +12,10 @@
    .field {background-color:rgba(255,255,255,.8);}
   </style>
   <script type="text/javascript">
-   var FIELDS = ["givenName", "surname", "additionalAddress", "street", "cityCode", "city", "mail", "mailGuardian", "phoneNumber", "mobileNumber", "reason1", "reason2"];
+   var FIELDS = ["givenName", "surname", "additionalAddress", "street", "cityCode", "city", "mail", "mailGuardian", "phoneNumber", "mobileNumber", "reason1", "reason2", "membershipDate", "birthDate"];
+   var MEMBERSHIPS = {1: "Ordentlich", 2: "Zweitmitglied", 3: "Fördermitglied", 4: "Juristisches"};
+   var GENDERS = {369: "männlich", 370: "weiblich", 371: "divers"};
+
    $(function() {
        $("input.memberSearch").focus().autocomplete({
            delay: 200,
@@ -51,48 +54,50 @@
                        alert("Aktivierung erfolgreich!");
                        window.location = "/search.html";
                    } else {
-                       alert("Konnte das Mitglied nicht freischalten");
-                       $(this).attr("disabled", false);
+                       alert("Konnte das Mitglied nicht freischalten: " + returnValue.message);
+                       $(".activateMemberBtn").attr("disabled", false);
                    }
                },
                error: function() {
                    alert("Konnte das Mitglied nicht freischalten");
-                   $(this).attr("disabled", false);
+                   $(".activateMemberBtn").attr("disabled", false);
                },
            });
        });
 
-       function showMemberSearch() {
-           $("input.memberSearch").attr("disabled", false).val("");
-
-           $("div.memberSearch").show();
-           $("div.memberReview").hide();
-       }
-
-       function showMember(memberId) {
-           $("input.memberSearch").attr("disabled", true);
-
-           $.ajax("/query.json", {
-               data: {"memberId": memberId},
-               success: function(returnValue) {
-                   $(".memberReview").data("memberId", memberId);
-
-                   FIELDS.forEach(function (item) {
-                       $("input." + item).val(returnValue.data[item]);
-                   });
-
-                   // birthDate, membership, gender, membershipDate
-
-                   $("div.memberSearch").hide();
-                   $("div.memberReview").show();
-               },
-               error: function() {
-                   alert("Mitgliederdaten können nicht abgerufen werden.");
-                   showMemberSearch();
-               },
-           });
-       }
    });
+
+   function showMemberSearch() {
+       $("input.memberSearch").attr("disabled", false).val("");
+
+       $("div.memberSearch").show();
+       $("div.memberReview").hide();
+   }
+
+   function showMember(memberId) {
+       $("input.memberSearch").attr("disabled", true);
+
+       $.ajax("/query.json", {
+           data: {"memberId": memberId},
+           success: function(returnValue) {
+               $(".memberReview").data("memberId", memberId);
+
+               FIELDS.forEach(function (item) {
+                   $("input." + item).val(returnValue.data[item]);
+               });
+
+               $("input.membership").val(MEMBERSHIPS[returnValue.data["membership"]]);
+               $("input.gender").val(GENDERS[returnValue.data["gender"]]);
+
+               $("div.memberSearch").hide();
+               $("div.memberReview").show();
+           },
+           error: function() {
+               alert("Mitgliederdaten können nicht abgerufen werden.");
+               showMemberSearch();
+           },
+       });
+   }
   </script>
  </head>
  <body>
@@ -107,54 +112,43 @@
     <div class="six columns memberSearch">
      <input type="text" class="u-full-width memberSearch" />
     </div>
-    <div class="six columns memberReview" style="display:none;">
+    <div class="three columns memberReview" style="display:none;">
      <label for="membership">Mitgliedsart</label>
-     <input type="text" name="membership" class="membership" value="" disabled="disabled" />
-     <label for="department">Gliederung</label>
-     <input type="text" name="department" class="department" value="" disabled="disabled" />
+     <input type="text" name="membership" class="u-full-width membership" value="" disabled="disabled" />
      <label for="givenName">Vorname</label>
-     <input type="text" name="givenName" class="givenName" value="" disabled="disabled" />
+     <input type="text" name="givenName" class="u-full-width givenName" value="" disabled="disabled" />
      <label for="surname">Nachname</label>
-     <input type="text" name="surname" class="surname" value="" disabled="disabled" />
-     <label for="birthDate">Geburtsdatum</label>
-     <input type="text" name="birthDate" class="birthDate" value="" disabled="disabled" />
-     <label for="gender">Geschlecht</label>
-     <input type="text" name="gender" class="gender" value="" disabled="disabled" />
+     <input type="text" name="surname" class="u-full-width surname" value="" disabled="disabled" />
      <label for="additionalAddress">Adresszusatz</label>
-     <input type="text" name="additionalAddress" class="additionalAddress" value="" disabled="disabled" />
+     <input type="text" name="additionalAddress" class="u-full-width additionalAddress" value="" disabled="disabled" />
      <label for="street">Straße</label>
-     <input type="text" name="street" class="street" value="" disabled="disabled" />
-     <label for="cityCode">PLZ</label>
-     <input type="text" name="cityCode" class="cityCode" value="" disabled="disabled" />
-     <label for="city">Ort</label>
-     <input type="text" name="city" class="city" value="" disabled="disabled" />
-
-     <div style="position:relative; display:none;">
-      <img src="stimmzettel.jpg" />
-      <p class="field department" style="position:absolute;left:45%;bottom:80%;">department</p>
-      <p class="field givenName" style="position:absolute;left:13%;bottom:75%;">givenName</p>
-      <p class="field surname" style="position:absolute;left:37%;bottom:75%;">surname</p>
-      <p class="field membership membershipOrdinary" style="position:absolute;left:12%;top:10%; display:none;">X</p>
-      <p class="field membership membershipSecondary" style="position:absolute;left:12%;top:13%; display:none;">X</p>
-      <p class="field membership membershipSupporting" style="position:absolute;left:12%;top:15%; display:none;">X</p>
-      <p class="field membership membershipJuristic" style="position:absolute;left:12%;top:17%; display:none;">X</p>
-      <p class="field gender genderMale" style="position:absolute;left:84%;top:21%; display:none;">X</p>
-      <p class="field gender genderFemale" style="position:absolute;left:91%;top:21%; display:none;">X</p>
-      <p class="field gender genderVarious" style="position:absolute;left:91%;top:23%; display:none;">X</p>
-      <p class="field birthDate" style="position:absolute;left:63%;bottom:75%;">birthDate</p>
-      <p class="field additionalAddress" style="position:absolute;left:13%;bottom:71%;">additionalAddress</p>
-      <p class="field phoneNumber" style="position:absolute;left:51%;bottom:71%;">phoneNumber</p>
-      <p class="field street" style="position:absolute;left:13%;bottom:67%;">street</p>
-      <p class="field mobileNumber" style="position:absolute;left:51%;bottom:67%;">mobileNumber</p>
-      <p class="field cityCode" style="position:absolute;left:13%;bottom:63%;">cityCode</p>
-      <p class="field city" style="position:absolute;left:23%;bottom:63%;">city</p>
-      <p class="field mail" style="position:absolute;left:51%;bottom:63%;">mail</p>
-      <p class="field mailGuardian" style="position:absolute;left:72%;bottom:63%;">mailGuardian</p>
-      <p class="field membershipDate" style="position:absolute;left:12%;bottom:54%;">membershipDate</p>
-      <p class="field reason1" style="position:absolute;left:15%;top:72%;width:37%;">reason1</p>
-      <p class="field reason2" style="position:absolute;left:15%;top:80%;width:37%;">reason2</p>
-     </div>
-
+     <input type="text" name="street" class="u-full-width street" value="" disabled="disabled" />
+     <label for="cityCode">PLZ und Ort</label>
+     <input type="text" name="cityCode" class="cityCode" value="" style="width:27%;" disabled="disabled" />
+     <!-- <label for="city">Ort</label> -->
+     <input type="text" name="city" class="city" value="" style="width:69%;" disabled="disabled" />
+     <label for="reason1">Begründung Mitglied</label>
+     <textarea name="reason1" class="u-full-width reason1" disabled="disabled"></textarea>
+     <label for="reason2">Begründung Stamm</label>
+     <textarea name="reason2" class="u-full-width reason2" disabled="disabled"></textarea>
+    </div>
+    <div class="three columns memberReview" style="display:none;">
+     <label for="department">Gliederung</label>
+     <input type="text" name="department" class="u-full-width department" value="" disabled="disabled" />
+     <label for="birthDate">Geburtsdatum</label>
+     <input type="text" name="birthDate" class="u-full-width birthDate" value="" disabled="disabled" />
+     <label for="gender">Geschlecht</label>
+     <input type="text" name="gender" class="u-full-width gender" value="" disabled="disabled" />
+     <label for="phoneNumber">Telefonnummer</label>
+     <input type="text" name="phoneNumber" class="u-full-width phoneNumber" value="" disabled="disabled" />
+     <label for="mobileNumber">Mobilnummer</label>
+     <input type="text" name="mobileNumber" class="u-full-width mobileNumber" value="" disabled="disabled" />
+     <label for="mail">E-Mail</label>
+     <input type="text" name="mail" class="u-full-width mail" value="" disabled="disabled" />
+     <label for="mailGuardian">E-Mail Erziehungsberechtigte</label>
+     <input type="text" name="mailGuardian" class="u-full-width mailGuardian" value="" disabled="disabled" />
+     <label for="membershipDate">Unterschriftsdatum</label>
+     <input type="text" name="membershipDate" class="u-full-width membershipDate" value="" disabled="disabled" />
      <button class="button-primary activateMemberBtn">Aktivieren</button>
     </div>
    </div>
