@@ -6,6 +6,12 @@
   <link rel="stylesheet" href="/css/normalize.css">
   <link rel="stylesheet" href="/css/skeleton.css">
   <link rel="stylesheet" href="/custom.css">
+  <script type="text/javascript" src="/jquery-3.4.1.min.js"></script>
+  <script type="text/javascript">
+   $(function() {
+       $(".username").focus();
+   });
+  </script>
  </head>
  <body>
   <div class="container">
@@ -19,13 +25,13 @@
     <form method="post">
      <div class="six columns">
       <label for="username">MV-Nutzername</label>
-      <input type="text" name="username" class="u-full-width" />
+      <input type="text" name="username" class="username u-full-width" />
      </div>
      <div class="six columns">
       <label for="password">MV-Passwort</label>
-      <input type="password" name="password" class="u-full-width" />
+      <input type="password" name="password" class="password u-full-width" />
      </div>
-      <input type="submit" class="button-primary" value="Login" />
+     <input type="submit" class="button-primary" value="Login" style="float:right;" />
     </form>
    </div>
   </div>
