@@ -95,6 +95,7 @@
            data: {"memberId": memberId},
            success: function(returnValue) {
                $(".memberReview").data("memberId", memberId);
+               $(".memberId").text(memberId);
 
                FIELDS.forEach(function (item) {
                    $("input." + item).val(returnValue.data[item]);
@@ -129,6 +130,7 @@
      <input type="text" class="u-full-width memberSearch" />
     </div>
     <div class="three columns memberReview">
+     <h2>Mitglied #<span class="memberId"></span></h2>
      <label for="membership">Mitgliedsart</label>
      <input type="text" name="membership" class="u-full-width membership" value="" disabled="disabled" />
      <label for="givenName">Vorname</label>
@@ -148,6 +150,7 @@
      <textarea name="reason2" class="u-full-width reason2" disabled="disabled"></textarea>
     </div>
     <div class="three columns memberReview">
+     <h2>&nbsp;</h2>
      <label for="department">Gliederung</label>
      <input type="text" name="department" class="u-full-width department" value="" disabled="disabled" />
      <label for="birthDate">Geburtsdatum</label>
