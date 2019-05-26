@@ -8,9 +8,9 @@ MEMBERSHIP_SECONDARY = 2
 MEMBERSHIP_SUPPORTING = 3
 MEMBERSHIP_JURISTIC = 4
 
-GENDER_MALE = 1
-GENDER_FEMALE = 2
-GENDER_VARIOUS = 3
+GENDER_MALE = 369
+GENDER_FEMALE = 370
+GENDER_VARIOUS = 371
 
 
 class IcaConnector:
@@ -21,13 +21,13 @@ class IcaConnector:
         # return False
         return True
 
-    def search(self, string):
+    def search(self, user, password, string):
         return [
             {"memberId": 325, "name": "Philipp Metzler"},
             {"memberId": 523, "name": "Random Dude"},
         ]
 
-    def get(self, id):
+    def get(self, user, password, id):
         return {
             "givenName": "Philipp",
             "surname": "Metzler",
@@ -40,9 +40,12 @@ class IcaConnector:
             "birthDate": datetime.date(2003, 5, 7),
             "mail": "metzler@example.com",
             "mailGuardian": "eltern@example.org",
+            "phoneNumber": "+49 123456",
+            "mobileNumber": "+49 987654",
             "reason1": "-",
             "reason2": "-",
+            "membershipDate": datetime.date(2019, 5, 24),
         }
 
-    def activate(self, memberId):
+    def activate(self, user, password, memberId):
         return True

@@ -4,6 +4,7 @@
 import string
 import random
 import os.path
+import os
 from handlers.image import handleImage
 from handlers.pdf import handlePdf
 
@@ -32,6 +33,9 @@ class FileStorage:
             if not os.path.isfile(filePath):
                 return fileId, filePath
 
+    def _getPermanentFilepath(self, memberId):
+        return os.path.join(self.destinationFolder, memberId + ".jpg")
+
     def storeFileTemporary(self, file):
         extension = file.filename.split(".")[-1][0:7]
         if extension not in HANDLERS:
@@ -53,5 +57,10 @@ class FileStorage:
         return data
 
     def storeFile(self, fileId, memberId):
-        # TODO probably resize images
-        pass
+        os.rename(
+            self._getTemporaryFilepath(fileId),
+            self._getPermanentFilepath(memberId))
+
+
+class UploadException(Exception):
+    pass

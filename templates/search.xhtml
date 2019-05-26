@@ -1,7 +1,33 @@
 <html>
-<script type="text/javascript" src="jquery-3.4.1.min.js"></script>
-<form action="upload" method="post" enctype="multipart/form-data">
- <input type="file" name="applicationFile" />
- <input type="submit" />
-</form>
+ <head>
+  <meta charset="utf-8">
+  <title>MV: Freischaltung</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/css/normalize.css">
+  <link rel="stylesheet" href="/css/skeleton.css">
+  <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
+  <script type="text/javascript">
+   $(function () {
+       $("input.applicationFile").change(function () {
+           $("form").submit();
+       });
+   });
+  </script>
+ </head>
+ <body>
+  <div class="container">
+   <h1>Dateiupload</h1>
+   <p>Bitte nur eine Datei hochladen, welche exakt genau einen Mitgliedsantrag enthält. Als Dateiformate
+    sind PDF, PNG oder JPEG zulässig, wobei bei PDF-Dokumenten nur die erste Seite verwendet wird.</p>
+   <div class="row">
+    <form action="upload" method="post" enctype="multipart/form-data">
+     <div class="six columns">
+      <label for="file">Datei (PDF, PNG oder JPEG)</label>
+      <input type="file" name="applicationFile" class="u-full-width applicationFile" />
+     </div>
+     <input type="submit" class="button-primary" value="Hochladen" />
+    </form>
+   </div>
+  </div>
+ </body>
 </html>

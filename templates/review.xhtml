@@ -1,8 +1,166 @@
 <html>
- <img src="application.jpg?id={{ fileId }}" />
- <form action="activate" method="post">
-  <input type="hidden" name="fileId" value="{{ fileId }}" />
-  <input type="text" name="memberId" />
-  <input type="submit" />
- </form>
+ <head>
+  <meta charset="utf-8">
+  <title>MV: Freischaltung</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/css/normalize.css">
+  <link rel="stylesheet" href="/css/skeleton.css">
+  <link rel="stylesheet" href="/jquery-ui.min.css">
+  <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
+  <script type="text/javascript" src="jquery-ui.min.js"></script>
+  <style type="text/css">
+   .field {background-color:rgba(255,255,255,.8);}
+  </style>
+  <script type="text/javascript">
+   var FIELDS = ["givenName", "surname", "additionalAddress", "street", "cityCode", "city", "mail", "mailGuardian", "phoneNumber", "mobileNumber", "reason1", "reason2"];
+   $(function() {
+       $("input.memberSearch").focus().autocomplete({
+           delay: 200,
+           autoFocus: true,
+           source: function(request, callback) {
+               $.ajax("/find.json", {
+                   data: {"query": request.term},
+                   success: function(returnValue) {
+                       callback(returnValue.data.map(function (item) {
+                           return item.memberId + " " + item.name;
+                       }));
+                   },
+                   error: function() {
+                       callback([]);
+                   },
+               });
+           },
+           close: function() {
+               var value = $(this).val();
+               var memberId = value.split(" ", 2)[0];
+               if ($.isNumeric(memberId)) {
+                   showMember(memberId);
+               }
+           },
+       });
+
+       $(".activateMemberBtn").click(function () {
+           var memberId = $(".memberReview").data("memberId");
+           $(this).attr("disabled", true);
+
+           $.ajax("/activate.json", {
+               method: "POST",
+               data: {"fileId": "{{ fileId }}", "memberId": memberId},
+               success: function(returnValue) {
+                   if (returnValue.success) {
+                       alert("Aktivierung erfolgreich!");
+                       window.location = "/search.html";
+                   } else {
+                       alert("Konnte das Mitglied nicht freischalten");
+                       $(this).attr("disabled", false);
+                   }
+               },
+               error: function() {
+                   alert("Konnte das Mitglied nicht freischalten");
+                   $(this).attr("disabled", false);
+               },
+           });
+       });
+
+       function showMemberSearch() {
+           $("input.memberSearch").attr("disabled", false).val("");
+
+           $("div.memberSearch").show();
+           $("div.memberReview").hide();
+       }
+
+       function showMember(memberId) {
+           $("input.memberSearch").attr("disabled", true);
+
+           $.ajax("/query.json", {
+               data: {"memberId": memberId},
+               success: function(returnValue) {
+                   $(".memberReview").data("memberId", memberId);
+
+                   FIELDS.forEach(function (item) {
+                       $("input." + item).val(returnValue.data[item]);
+                   });
+
+                   // birthDate, membership, gender, membershipDate
+
+                   $("div.memberSearch").hide();
+                   $("div.memberReview").show();
+               },
+               error: function() {
+                   alert("Mitgliederdaten können nicht abgerufen werden.");
+                   showMemberSearch();
+               },
+           });
+       }
+   });
+  </script>
+ </head>
+ <body>
+  <div class="container" style="max-width:1200px;">
+   <h1>Überprüfung</h1>
+   <p>Auf der linken Seite wird der Mitgliedsantrag angezeigt. Bitte suche auf der rechten Seite das
+    entsprechende Mitglied anhand des Namens.</p>
+   <div class="row">
+    <div class="six columns">
+     <img src="application.jpg?id={{ fileId }}" width="100%" />
+    </div>
+    <div class="six columns memberSearch">
+     <input type="text" class="u-full-width memberSearch" />
+    </div>
+    <div class="six columns memberReview" style="display:none;">
+     <label for="membership">Mitgliedsart</label>
+     <input type="text" name="membership" class="membership" value="" disabled="disabled" />
+     <label for="department">Gliederung</label>
+     <input type="text" name="department" class="department" value="" disabled="disabled" />
+     <label for="givenName">Vorname</label>
+     <input type="text" name="givenName" class="givenName" value="" disabled="disabled" />
+     <label for="surname">Nachname</label>
+     <input type="text" name="surname" class="surname" value="" disabled="disabled" />
+     <label for="birthDate">Geburtsdatum</label>
+     <input type="text" name="birthDate" class="birthDate" value="" disabled="disabled" />
+     <label for="gender">Geschlecht</label>
+     <input type="text" name="gender" class="gender" value="" disabled="disabled" />
+     <label for="additionalAddress">Adresszusatz</label>
+     <input type="text" name="additionalAddress" class="additionalAddress" value="" disabled="disabled" />
+     <label for="street">Straße</label>
+     <input type="text" name="street" class="street" value="" disabled="disabled" />
+     <label for="cityCode">PLZ</label>
+     <input type="text" name="cityCode" class="cityCode" value="" disabled="disabled" />
+     <label for="city">Ort</label>
+     <input type="text" name="city" class="city" value="" disabled="disabled" />
+
+     <div style="position:relative; display:none;">
+      <img src="stimmzettel.jpg" />
+      <p class="field department" style="position:absolute;left:45%;bottom:80%;">department</p>
+      <p class="field givenName" style="position:absolute;left:13%;bottom:75%;">givenName</p>
+      <p class="field surname" style="position:absolute;left:37%;bottom:75%;">surname</p>
+      <p class="field membership membershipOrdinary" style="position:absolute;left:12%;top:10%; display:none;">X</p>
+      <p class="field membership membershipSecondary" style="position:absolute;left:12%;top:13%; display:none;">X</p>
+      <p class="field membership membershipSupporting" style="position:absolute;left:12%;top:15%; display:none;">X</p>
+      <p class="field membership membershipJuristic" style="position:absolute;left:12%;top:17%; display:none;">X</p>
+      <p class="field gender genderMale" style="position:absolute;left:84%;top:21%; display:none;">X</p>
+      <p class="field gender genderFemale" style="position:absolute;left:91%;top:21%; display:none;">X</p>
+      <p class="field gender genderVarious" style="position:absolute;left:91%;top:23%; display:none;">X</p>
+      <p class="field birthDate" style="position:absolute;left:63%;bottom:75%;">birthDate</p>
+      <p class="field additionalAddress" style="position:absolute;left:13%;bottom:71%;">additionalAddress</p>
+      <p class="field phoneNumber" style="position:absolute;left:51%;bottom:71%;">phoneNumber</p>
+      <p class="field street" style="position:absolute;left:13%;bottom:67%;">street</p>
+      <p class="field mobileNumber" style="position:absolute;left:51%;bottom:67%;">mobileNumber</p>
+      <p class="field cityCode" style="position:absolute;left:13%;bottom:63%;">cityCode</p>
+      <p class="field city" style="position:absolute;left:23%;bottom:63%;">city</p>
+      <p class="field mail" style="position:absolute;left:51%;bottom:63%;">mail</p>
+      <p class="field mailGuardian" style="position:absolute;left:72%;bottom:63%;">mailGuardian</p>
+      <p class="field membershipDate" style="position:absolute;left:12%;bottom:54%;">membershipDate</p>
+      <p class="field reason1" style="position:absolute;left:15%;top:72%;width:37%;">reason1</p>
+      <p class="field reason2" style="position:absolute;left:15%;top:80%;width:37%;">reason2</p>
+     </div>
+
+     <button class="button-primary activateMemberBtn">Aktivieren</button>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>
+
+<html>
 </html>

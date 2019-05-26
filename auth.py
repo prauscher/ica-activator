@@ -5,6 +5,9 @@ from tg import expose, redirect, session, TGController
 from urllib.parse import quote
 
 
+def get_userdata():
+    return session["user"]
+
 def require_login():
     def decorator(func):
         def wrapper(*args, **kwargs):
