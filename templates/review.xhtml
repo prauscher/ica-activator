@@ -17,8 +17,9 @@
    var GENDERS = {369: "männlich", 370: "weiblich", 371: "divers"};
 
    $(function() {
-       $("input.memberSearch").focus().autocomplete({
+       $("input.memberSearch").autocomplete({
            delay: 200,
+           minLength: 0,
            autoFocus: true,
            source: function(request, callback) {
                $.ajax("/find.json", {
@@ -44,7 +45,7 @@
 
        $(".activateMemberBtn").click(function () {
            var memberId = $(".memberReview").data("memberId");
-           $(this).attr("disabled", true);
+           $(".activateMemberBtn").attr("disabled", true);
 
            $.ajax("/activate.json", {
                method: "POST",
@@ -65,6 +66,7 @@
            });
        });
 
+       $("input.memberSearch").focus();
    });
 
    function showMemberSearch() {
