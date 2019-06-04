@@ -4,7 +4,7 @@
 from tg import expose, redirect, TGController
 from tg.controllers.util import abort
 from .auth import UserController, require_login, get_userdata
-from backend.ica import IcaConnector
+from backend.ica.connector import IcaConnector
 from backend.files import FileStorage, UploadException
 
 ica = IcaConnector()
