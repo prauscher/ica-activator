@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import hmac
+import requests
+from pprint import pformat
 import datetime
 import random
-
-ALLOWED_HASHES = [
-    "cb942e814af87e97e5be94c8fd7a3b2b",
-    "8e19eeeb40d7e7ff92f054f099846650",
-]
 
 MEMBERSHIP_ORDINARY = 1
 MEMBERSHIP_SECONDARY = 2
@@ -20,13 +16,8 @@ GENDER_FEMALE = 370
 GENDER_VARIOUS = 371
 
 
-def _calculate_hash(username, password):
-    return hmac.new(username.encode("utf-8"),
-                    password.encode("utf-8")).hexdigest()
-
-
 class IcaSession:
-    session_id = None
+    sessionId = None
 
     def __init__(self, endpoint):
         if not endpoint.endswith("/"):
@@ -34,9 +25,28 @@ class IcaSession:
 
         self.endpoint = endpoint
 
+    def _call(self, method, data={}):
+        url = self.endpoint + method
+        cookies = {}
+        if self.sessionId is not None:
+            cookieName, cookieValue = self.sessionId
+            cookies[cookieName] = cookieValue
+        print("DEBUG: => {} {}".format(url, pformat(data)))
+        resp = requests.post(url, data=data, cookies=cookies).json()
+        print("DEBUG: <= {}".format(pformat(resp)))
+        return resp
+
     def auth(self, user, password):
-        self.session_id = "AAA"
-        return _calculate_hash(user, password) in ALLOWED_HASHES
+        authData = {
+            "username": user,
+            "password": password,
+            "Login": "API",
+        }
+        resp = self._call("rest/nami/auth/manual/sessionStartup", authData)
+        if resp["statusCode"] != 0:
+            raise IcaApiException(resp["statusMessage"])
+        self.sessionId = (resp["apiSessionName"], resp["apiSessionToken"])
+        return True
 
     def search(self, string):
         return [
