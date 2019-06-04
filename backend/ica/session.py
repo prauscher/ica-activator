@@ -29,6 +29,9 @@ class IcaSession:
     session_id = None
 
     def __init__(self, endpoint):
+        if not endpoint.endswith("/"):
+            endpoint = endpoint + "/"
+
         self.endpoint = endpoint
 
     def auth(self, user, password):

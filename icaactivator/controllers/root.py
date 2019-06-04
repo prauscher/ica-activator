@@ -7,7 +7,7 @@ from .auth import UserController, require_login, get_userdata
 from backend.ica.connector import IcaConnector
 from backend.files import FileStorage, UploadException
 
-ica = IcaConnector()
+ica = IcaConnector("https://qa.mv.meinbdp.de/ica")
 fileStorage = FileStorage("./temp", "./storage")
 
 
