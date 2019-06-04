@@ -2,17 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from .session import IcaSession
-import datetime
-import random
-
-MEMBERSHIP_ORDINARY = 1
-MEMBERSHIP_SECONDARY = 2
-MEMBERSHIP_SUPPORTING = 3
-MEMBERSHIP_JURISTIC = 4
-
-GENDER_MALE = 369
-GENDER_FEMALE = 370
-GENDER_VARIOUS = 371
 
 
 class IcaConnector:

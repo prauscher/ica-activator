@@ -2,11 +2,22 @@
 # -*- coding: utf-8 -*-
 
 import hmac
+import datetime
+import random
 
 ALLOWED_HASHES = [
     "cb942e814af87e97e5be94c8fd7a3b2b",
     "8e19eeeb40d7e7ff92f054f099846650",
 ]
+
+MEMBERSHIP_ORDINARY = 1
+MEMBERSHIP_SECONDARY = 2
+MEMBERSHIP_SUPPORTING = 3
+MEMBERSHIP_JURISTIC = 4
+
+GENDER_MALE = 369
+GENDER_FEMALE = 370
+GENDER_VARIOUS = 371
 
 
 def _calculate_hash(username, password):
