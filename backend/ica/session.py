@@ -69,6 +69,10 @@ class IcaSession:
         return True
 
 
+class IcaApiException(Exception):
+    pass
+
+
 if __name__ == "__main__":
     import sys
     print(_calculate_hash(sys.argv[1], sys.argv[2]))

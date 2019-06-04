@@ -1,7 +1,7 @@
 #!/usr/bin/env python3.7
 # -*- coding: utf-8 -*-
 
-from .session import IcaSession
+from .session import IcaSession, IcaApiException
 
 
 class IcaConnector:
@@ -10,7 +10,10 @@ class IcaConnector:
 
     def auth(self, user, password):
         session = IcaSession(self.endpoint)
-        return session.auth(user, password)
+        try:
+            return session.auth(user, password)
+        except IcaApiException:
+            return False
 
     def search(self, user, password, string):
         session = IcaSession(self.endpoint)
