@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import requests
+import json
 from pprint import pformat
 import datetime
 import random
@@ -25,14 +26,14 @@ class IcaSession:
 
         self.endpoint = endpoint
 
-    def _call(self, method, data={}):
-        url = self.endpoint + method
+    def _call(self, method, path, **kwargs):
+        url = self.endpoint + path
         cookies = {}
         if self.sessionId is not None:
             cookieName, cookieValue = self.sessionId
             cookies[cookieName] = cookieValue
-        print("DEBUG: => {} {}".format(url, pformat(data)))
-        resp = requests.post(url, data=data, cookies=cookies).json()
+        print("DEBUG: => {} {}".format(url, pformat(kwargs)))
+        resp = requests.request(method, url, cookies=cookies, **kwargs).json()
         print("DEBUG: <= {}".format(pformat(resp)))
         return resp
 
@@ -42,19 +43,39 @@ class IcaSession:
             "password": password,
             "Login": "API",
         }
-        resp = self._call("rest/nami/auth/manual/sessionStartup", authData)
+        resp = self._call("POST",
+                          "rest/nami/auth/manual/sessionStartup",
+                          data={"username": user,
+                                "password": password,
+                                "Login": "API"})
         if resp["statusCode"] != 0:
             raise IcaApiException(resp["statusMessage"])
         self.sessionId = (resp["apiSessionName"], resp["apiSessionToken"])
         return True
 
     def search(self, string):
-        return [
-            {"memberId": random.randint(100, 199), "name": "Philipp Metzler"},
-            {"memberId": random.randint(200, 299), "name": "Random Dude"},
-        ]
+        # Sadly, ica does not allow for anytext-filters...
+        # TODO implement caching
+        filter = {"mglStatusId": "WARTEND"}
+        resp = self._call("GET",
+                          "rest/nami/search-multi/result-list",
+                          params={"searchedValues": json.dumps(filter)})
+        if not resp["success"]:
+            raise IcaApiException(resp["message"])
+
+        return [{"memberId": e["entries_id"], "name": e["descriptor"]}
+                for e in resp["data"]
+                if string in e["descriptor"]]
 
     def get(self, id):
+        filter = {"mitgliedsNummer": id}
+        resp = self._call("GET",
+                          "rest/nami/search-multi/result-list",
+                          params={"searchedValues": json.dumps(filter)})
+        if not resp["success"]:
+            raise IcaApiException(resp["message"])
+
+        print(resp)
         return {
             "givenName": "Philipp",
             "surname": "Metzler",
