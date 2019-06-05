@@ -13,7 +13,7 @@
    .field {background-color:rgba(255,255,255,.8);}
   </style>
   <script type="text/javascript">
-   var FIELDS = ["eintrittsdatum", "email", "emailVertretungsberechtigter", "geburtsDatum", "geschlecht", "gruppierung", "mglType", "mitgliedsNummer", "nachname", "telefon1", "telefon2", "telefon3", "vorname", "land", "nameZusatz", "ort", "plz", "strasse"];
+   var FIELDS = ["eintrittsdatum", "email", "emailVertretungsberechtigter", "geburtsDatum", "geschlecht", "gruppierung", "mglType", "mitgliedsNummer", "nachname", "telefon1", "telefon2", "telefon3", "vorname", "land", "nameZusatz", "ort", "plz", "strasse", "dyn_BegruendungMitglied", "dyn_BegruendungStamm"];
 
    var waitingMembers;
 
@@ -148,12 +148,10 @@
      <label for="cityCode">PLZ und Ort</label>
      <input type="text" name="cityCode" class="plz" value="" style="width:27%;" disabled="disabled" />
      <input type="text" name="city" class="ort" value="" style="width:69%;" disabled="disabled" />
-     <!--
      <label for="reason1">Begründung Mitglied</label>
-     <textarea name="reason1" class="u-full-width reason1" disabled="disabled"></textarea>
+     <textarea name="reason1" class="u-full-width dyn_BegruendungMitglied" disabled="disabled"></textarea>
      <label for="reason2">Begründung Stamm</label>
-     <textarea name="reason2" class="u-full-width reason2" disabled="disabled"></textarea>
-     -->
+     <textarea name="reason2" class="u-full-width dyn_BegruendungStamm" disabled="disabled"></textarea>
     </div>
     <div class="three columns memberReview">
      <h2>&nbsp;</h2>
