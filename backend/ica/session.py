@@ -53,57 +53,23 @@ class IcaSession:
         self.sessionId = (resp["apiSessionName"], resp["apiSessionToken"])
         return True
 
-    def search(self, string):
-        # Sadly, ica does not allow for anytext-filters...
-        # TODO implement caching
-        filter = {"mglStatusId": "WARTEND"}
+    def search(self, filter):
         resp = self._call("GET",
                           "rest/nami/search-multi/result-list",
                           params={"searchedValues": json.dumps(filter)})
         if not resp["success"]:
             raise IcaApiException(resp["message"])
 
-        return [{"memberId": e["entries_id"], "name": e["descriptor"]}
-                for e in resp["data"]
-                if string in e["descriptor"]]
+        print(resp["data"])
+        return resp["data"]
 
-    def get(self, id):
-        filter = {"mitgliedsNummer": id}
-        resp = self._call("GET",
-                          "rest/nami/search-multi/result-list",
-                          params={"searchedValues": json.dumps(filter)})
+    def activate(self, id, notiz=""):
+        resp = self._call("POST",
+                          "rest/mgl-aufnahme/genehmige/{}".format(int(id)),
+                          json=[{"genehmigt": "true", "inhalt": notiz}])
         if not resp["success"]:
             raise IcaApiException(resp["message"])
-
-        print(resp)
-        return {
-            "givenName": "Philipp",
-            "surname": "Metzler",
-            "gender": GENDER_MALE,
-            "membership": MEMBERSHIP_ORDINARY,
-            "additionalAddress": "",
-            "street": "Mittwaldallee 7",
-            "cityCode": "41561",
-            "city": "Barnbeck",
-            "birthDate": datetime.date(2003, 5, 7),
-            "mail": "metzler@example.com",
-            "mailGuardian": "eltern@example.org",
-            "phoneNumber": "+49 123456",
-            "mobileNumber": "+49 987654",
-            "reason1": "-",
-            "reason2": "-",
-            "membershipDate": datetime.date(2019, 5, 24),
-            "department": "Graue Bären",
-        }
-
-    def activate(self, id):
-        return True
 
 
 class IcaApiException(Exception):
     pass
-
-
-if __name__ == "__main__":
-    import sys
-    print(_calculate_hash(sys.argv[1], sys.argv[2]))

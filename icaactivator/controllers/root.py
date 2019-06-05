@@ -52,6 +52,7 @@ class RootController(TGController):
     def activate(self, fileId, memberId):
         try:
             userdata = get_userdata()
+            ica.activate(userdata["username"], userdata["password"], memberId)
             fileStorage.storeFile(userdata["username"], fileId, memberId)
             return {"success": True}
         except Exception as e:
@@ -59,14 +60,7 @@ class RootController(TGController):
 
     @expose("json")
     @require_login()
-    def find(self, query):
+    def waiting(self):
         userdata = get_userdata()
-        data = ica.search(userdata["username"], userdata["password"], query)
-        return {"data": data}
-
-    @expose("json")
-    @require_login()
-    def query(self, memberId):
-        userdata = get_userdata()
-        data = ica.get(userdata["username"], userdata["password"], memberId)
+        data = ica.getWaiting(userdata["username"], userdata["password"])
         return {"data": data}
