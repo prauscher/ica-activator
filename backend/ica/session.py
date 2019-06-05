@@ -63,6 +63,17 @@ class IcaSession:
         print(resp["data"])
         return resp["data"]
 
+    def get(self, gliederungId, memberId):
+        resp = self._call("GET",
+                          "rest/nami/mitglied/filtered-for-navigation/" \
+                          "gruppierung/gruppierung/{}/{}" \
+                          .format(int(gliederungId), int(memberId)))
+        if not resp["success"]:
+            raise IcaApiException(resp["message"])
+
+        print(resp["data"])
+        return resp["data"]
+
     def activate(self, id, notiz=""):
         resp = self._call("POST",
                           "rest/mgl-aufnahme/genehmige/{}".format(int(id)),

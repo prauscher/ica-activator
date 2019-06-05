@@ -13,7 +13,7 @@
    .field {background-color:rgba(255,255,255,.8);}
   </style>
   <script type="text/javascript">
-   var FIELDS = ["eintrittsdatum", "email", "emailVertretungsberechtigter", "geburtsDatum", "geschlecht", "gruppierung", "mglType", "mitgliedsNummer", "nachname", "telefon1", "telefon2", "telefon3", "vorname"];
+   var FIELDS = ["eintrittsdatum", "email", "emailVertretungsberechtigter", "geburtsDatum", "geschlecht", "gruppierung", "mglType", "mitgliedsNummer", "nachname", "telefon1", "telefon2", "telefon3", "vorname", "land", "nameZusatz", "ort", "plz", "strasse"];
 
    var waitingMembers;
 
@@ -88,30 +88,31 @@
 
        for (var entry of waitingMembers) {
            if (entry.entries_id == memberId) {
-               $(".memberReview").data("memberId", memberId);
+               $.ajax("/member.json", {
+                   method: "POST",
+                   data: {"gliederung": entry.entries_gruppierungId, "mitglied": memberId},
+                   success: function(returnValue) {
+                       $(".memberReview").data("memberId", memberId);
 
-               console.log(entry);
+                       FIELDS.forEach(function (item) {
+                           $("span." + item).text(returnValue.data[item]);
+                           $("input." + item).val(returnValue.data[item]);
+                       });
 
-               FIELDS.forEach(function (item) {
-                   $("span." + item).text(entry["entries_" + item]);
-                   $("input." + item).val(entry["entries_" + item]);
+                       $("div.memberSearch").hide();
+                       $("div.memberReview").show();
+                       $(".activateMemberBtn").focus();                      
+                   },
+                   error: function() {
+                       showMessage("error", "Mitgliederdaten können nicht abgerufen werden.", 0);
+                       showMemberSearch();
+                   },
                });
-
-               $("div.memberSearch").hide();
-               $("div.memberReview").show();
-               $(".activateMemberBtn").focus();
-
                return;
            }
        }
-       showMessage("error", "Mitgliederdaten können nicht abgerufen werden.", 0);
+       showMessage("error", "Mitglied nicht gefunden.", 0);
        showMemberSearch();
-
-       $.ajax("/query.json", {
-           data: {"memberId": memberId},
-           success: function(returnValue) {
-           },
-       });
    }
   </script>
  </head>
@@ -132,23 +133,27 @@
     </div>
     <div class="three columns memberReview">
      <h2>Mitglied #<span class="mitgliedsNummer"></span></h2>
+     <!--
      <label for="membership">Mitgliedsart</label>
      <input type="text" name="membership" class="u-full-width mglType" value="" disabled="disabled" />
+     -->
      <label for="givenName">Vorname</label>
      <input type="text" name="givenName" class="u-full-width vorname" value="" disabled="disabled" />
      <label for="surname">Nachname</label>
      <input type="text" name="surname" class="u-full-width nachname" value="" disabled="disabled" />
      <label for="additionalAddress">Adresszusatz</label>
-     <input type="text" name="additionalAddress" class="u-full-width additionalAddress" value="" disabled="disabled" />
+     <input type="text" name="additionalAddress" class="u-full-width nameZusatz" value="" disabled="disabled" />
      <label for="street">Straße</label>
-     <input type="text" name="street" class="u-full-width street" value="" disabled="disabled" />
+     <input type="text" name="street" class="u-full-width strasse" value="" disabled="disabled" />
      <label for="cityCode">PLZ und Ort</label>
-     <input type="text" name="cityCode" class="cityCode" value="" style="width:27%;" disabled="disabled" />
-     <input type="text" name="city" class="city" value="" style="width:69%;" disabled="disabled" />
+     <input type="text" name="cityCode" class="plz" value="" style="width:27%;" disabled="disabled" />
+     <input type="text" name="city" class="ort" value="" style="width:69%;" disabled="disabled" />
+     <!--
      <label for="reason1">Begründung Mitglied</label>
      <textarea name="reason1" class="u-full-width reason1" disabled="disabled"></textarea>
      <label for="reason2">Begründung Stamm</label>
      <textarea name="reason2" class="u-full-width reason2" disabled="disabled"></textarea>
+     -->
     </div>
     <div class="three columns memberReview">
      <h2>&nbsp;</h2>
@@ -162,13 +167,13 @@
      <input type="text" name="telefon1" class="u-full-width telefon1" value="" disabled="disabled" />
      <label for="telefon2">Telefon 2</label>
      <input type="text" name="telefon2" class="u-full-width telefon2" value="" disabled="disabled" />
-     <label for="telefon3">Telefon 3</label>
+     <label for="telefon3">Mobiltelefon</label>
      <input type="text" name="telefon3" class="u-full-width telefon3" value="" disabled="disabled" />
      <label for="email">E-Mail</label>
      <input type="text" name="email" class="u-full-width email" value="" disabled="disabled" />
      <label for="mailGuardian">E-Mail Erziehungsberechtigte</label>
      <input type="text" name="mailGuardian" class="u-full-width emailVertretungsberechtigter" value="" disabled="disabled" />
-     <label for="membershipDate">Unterschriftsdatum</label>
+     <label for="membershipDate">Eintrittsdatum</label>
      <input type="text" name="membershipDate" class="u-full-width eintrittsdatum" value="" disabled="disabled" />
      <button class="button-primary activateMemberBtn">Aktivieren</button>
     </div>

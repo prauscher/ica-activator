@@ -64,3 +64,10 @@ class RootController(TGController):
         userdata = get_userdata()
         data = ica.getWaiting(userdata["username"], userdata["password"])
         return {"data": data}
+
+    @expose("json")
+    @require_login()
+    def member(self, gliederung, mitglied):
+        userdata = get_userdata()
+        data = ica.getMember(userdata["username"], userdata["password"], gliederung, mitglied)
+        return {"data": data}

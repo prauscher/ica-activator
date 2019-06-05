@@ -20,6 +20,11 @@ class IcaConnector:
         session.auth(user, password)
         return session.search({"mglStatusId": "WARTEND"})
 
+    def getMember(self, user, password, gliederungId, memberId):
+        session = IcaSession(self.endpoint)
+        session.auth(user, password)
+        return session.get(gliederungId, memberId)
+
     def activate(self, user, password, memberId):
         session = IcaSession(self.endpoint)
         session.auth(user, password)
