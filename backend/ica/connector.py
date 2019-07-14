@@ -25,7 +25,7 @@ class IcaConnector:
         session.auth(user, password)
         return session.get(gliederungId, memberId)
 
-    def activate(self, user, password, memberId):
+    def activate(self, user, password, memberId, reason):
         session = IcaSession(self.endpoint)
         session.auth(user, password)
-        return session.activate(memberId)
+        return session.activate(memberId, reason)

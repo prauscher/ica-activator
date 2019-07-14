@@ -45,7 +45,7 @@
 
            $.ajax("/activate.json", {
                method: "POST",
-               data: {"fileId": "{{ fileId }}", "memberId": memberId},
+               data: {"fileId": "{{ fileId }}", "memberId": memberId, "reason": ""},
                success: function(returnValue) {
                    if (returnValue.success) {
                        showMessage("success", "Aktivierung erfolgreich!", 2000);

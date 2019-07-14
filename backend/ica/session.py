@@ -74,10 +74,10 @@ class IcaSession:
         print(resp["data"])
         return resp["data"]
 
-    def activate(self, id, notiz=""):
+    def activate(self, id, reason=""):
         resp = self._call("POST",
                           "rest/mgl-aufnahme/genehmige/{}".format(int(id)),
-                          json=[{"genehmigt": "true", "inhalt": notiz}])
+                          json=[{"genehmigt": "true", "inhalt": reason}])
         if not resp["success"]:
             raise IcaApiException(resp["message"])
 

@@ -49,10 +49,10 @@ class RootController(TGController):
 
     @expose("json")
     @require_login()
-    def activate(self, fileId, memberId):
+    def activate(self, fileId, memberId, reason):
         try:
             userdata = get_userdata()
-            ica.activate(userdata["username"], userdata["password"], memberId)
+            ica.activate(userdata["username"], userdata["password"], memberId, reason)
             fileStorage.storeFile(userdata["username"], fileId, memberId)
             return {"success": True}
         except Exception as e:
