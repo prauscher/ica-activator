@@ -76,6 +76,6 @@ class RootController(TGController):
         eintrittsDatum = datetime.strptime(data["eintrittsdatum"], "%Y-%m-%d %H:%M:%S")
         geburtsDatum = datetime.strptime(data["geburtsDatum"], "%Y-%m-%d %H:%M:%S")
         eigthteen = geburtsDatum.replace(year=geburtsDatum.year + 18)
-        reasonRequired = data["mglTypeID"] == "MITGLIED" and eintrittsDatum >= eigthteen
+        reasonRequired = data["mglTypeId"] == "MITGLIED" and eintrittsDatum >= eigthteen
 
         return {"data": data, "reasonRequired": reasonRequired}
