@@ -73,8 +73,8 @@ class RootController(TGController):
         data = ica.getMember(userdata["username"], userdata["password"], gliederung, mitglied)
 
         # check if activation text is needed
-        eintrittsDatum = datetime.fromisoformat(data["eintrittsdatum"])
-        geburtsDatum = datetime.fromisoformat(data["geburtsDatum"])
+        eintrittsDatum = datetime.strptime(data["eintrittsdatum"], "%Y-%m-%d %H:%M:%S")
+        geburtsDatum = datetime.strptime(data["geburtsDatum"], "%Y-%m-%d %H:%M:%S")
         eigthteen = geburtsDatum.replace(year=geburtsDatum.year + 18)
         reasonRequired = data["mglTypeID"] == "MITGLIED" and eintrittsDatum >= eigthteen
 
