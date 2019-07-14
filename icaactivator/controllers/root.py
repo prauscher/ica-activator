@@ -3,6 +3,7 @@
 
 from tg import expose, redirect, TGController
 from tg.controllers.util import abort
+from datetime import datetime
 from .auth import UserController, require_login, get_userdata
 from backend.ica.connector import IcaConnector
 from backend.files import FileStorage, UploadException
@@ -70,4 +71,11 @@ class RootController(TGController):
     def member(self, gliederung, mitglied):
         userdata = get_userdata()
         data = ica.getMember(userdata["username"], userdata["password"], gliederung, mitglied)
-        return {"data": data}
+
+        # check if activation text is needed
+        eintrittsDatum = datetime.fromisoformat(data["eintrittsdatum"])
+        geburtsDatum = datetime.fromisoformat(data["geburtsDatum"])
+        eigthteen = geburtsDatum.replace(year=geburtsDatum.year + 18)
+        reasonRequired = data["mglTypeID"] == "MITGLIED" and eintrittsDatum >= eigthteen
+
+        return {"data": data, "reasonRequired": reasonRequired}

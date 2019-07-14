@@ -43,9 +43,19 @@
            var memberId = $(".memberReview").data("memberId");
            $(".activateMemberBtn").attr("disabled", true);
 
+           var reasonRequired = $("input.reasonRequired").prop("checked");
+           if (reasonRequired) {
+               reason = prompt("Begründung des Landesverbands?");
+               sendActivation(reason)
+           } else {
+               sendActivation("");
+           }
+       });
+
+       function sendActivation(reason) {
            $.ajax("/activate.json", {
                method: "POST",
-               data: {"fileId": "{{ fileId }}", "memberId": memberId, "reason": ""},
+               data: {"fileId": "{{ fileId }}", "memberId": memberId, "reason": reason},
                success: function(returnValue) {
                    if (returnValue.success) {
                        showMessage("success", "Aktivierung erfolgreich!", 2000);
@@ -62,7 +72,7 @@
                    showMemberSearch();
                },
            });
-       });
+       }
 
        showMemberSearch();
    });
@@ -97,7 +107,10 @@
                        FIELDS.forEach(function (item) {
                            $("span." + item).text(returnValue.data[item]);
                            $("input." + item).val(returnValue.data[item]);
+                           $("textarea." + item).val(returnValue.data[item]);
                        });
+
+                       $("input.reasonRequired").prop("checked", returnValue.reasonRequired);
 
                        $("div.memberSearch").hide();
                        $("div.memberReview").show();
@@ -152,6 +165,8 @@
      <textarea name="reason1" class="u-full-width dyn_BegruendungMitglied" disabled="disabled"></textarea>
      <label for="reason2">Begründung Stamm</label>
      <textarea name="reason2" class="u-full-width dyn_BegruendungStamm" disabled="disabled"></textarea>
+     <label for="reason3required">Begründung LV erforderlich?</label>
+     <input type="checkbox" name="reasonRequired" class="reasonRequired" />
     </div>
     <div class="three columns memberReview">
      <h2>&nbsp;</h2>
