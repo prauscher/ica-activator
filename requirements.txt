@@ -1,4 +1,5 @@
 TurboGears2
+PIL
 Pillow
 pdf2image
 Beaker
