@@ -3,3 +3,4 @@ PIL
 Pillow
 pdf2image
 Beaker
+Jinja2
